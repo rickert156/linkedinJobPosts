@@ -1,0 +1,27 @@
+*{
+	background-color:#5F2580;
+}
+
+body {
+	width:250px;
+}
+
+h1{
+	text-align:center;
+	color:#6C8CD5;
+}
+
+.buttonBlock{
+	margin: 0 auto;
+	padding: 0;
+	display: flex;
+}
+
+.startBtn:hover {
+    background-color:#BC38D3;
+}
+
+.startBtn:active {
+    background-color:#CCF600;
+    color:#4B2A82;
+}
