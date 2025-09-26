@@ -9,13 +9,21 @@ document.getElementById('info').textContent = `Парсим вкладку #${ta
 document.getElementById('parseBtn').addEventListener('click', async () => {
 	const results = await chrome.scripting.executeScript({
 		target: { tabId: tabId },
-		func: () => {
-			return {
-				title: document.title,
-				h1: document.querySelector('h1')?.innerText || ''
-			};
-		}
+		func: parserPage
 	});
-	console.log(results[0].result);
 });
+
+
+async function parserPage() {
+	const all_blocks = document.querySelectorAll('.job-card-job-posting-card-wrapper__entity-lockup');
+	if (all_blocks.length > 0){
+		for (let count_block = 0; count_block < all_blocks.length; count_block+=1){
+			const block = all_blocks[count_block];
+			const title = block.querySelector('strong').innerText;
+			console.log(`[ ${count_block+1} ] ${title}`);
+		}
+	} else {
+		console.log(all_blocks);
+	}
+}
 
