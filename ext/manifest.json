@@ -4,23 +4,42 @@
     "description": "Расширение для парсинга job post'ов из Linkedin",
     "version": "1.1",
     "icons": {
-	"128": "images/jobs.png"
+	    "128": "images/jobs.png"
     },
+    
     "background":{
-	"service_worker":"background.js"
+	    "service_worker":"js/background.js"
     },
 
+    "content_scripts":[
+	    {
+		    "js":[
+			    "js/content.js"
+		    ],
+		    "matches":[
+			    "<all_urls>"
+		    ]
+	    }
+    ],
+
+    "web_accessible_resources":[{
+	    "resources":["html/parser.html"],
+	    "matches":["<all_urls>"]
+    }],
+
     "permissions": [
-	"unlimitedStorage",
-	"activeTab",
-	"scripting"
+	    "unlimitedStorage",
+	    "activeTab",
+	    "scripting",
+	    "tabs"
     ],
     "host_permissions":[
-	"http://127.0.0.1:7700/*",
-	"http://localhost:7700/*"
+	    "<all_urls>",
+	    "http://127.0.0.1:7700/*",
+	    "http://localhost:7700/*"
     ],
 
     "action": {
-	"default_popup":"popup.html"
+	    "default_popup":"html/popup.html"
     }
 }
