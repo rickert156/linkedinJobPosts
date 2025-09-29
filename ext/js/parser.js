@@ -15,15 +15,71 @@ document.getElementById('parseBtn').addEventListener('click', async () => {
 
 
 async function parserPage() {
-	const all_blocks = document.querySelectorAll('.job-card-job-posting-card-wrapper__entity-lockup');
+	
+	const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+	
+	const all_blocks = document.querySelectorAll('.job-card-job-posting-card-wrapper__card-link');
 	if (all_blocks.length > 0){
 		for (let count_block = 0; count_block < all_blocks.length; count_block+=1){
 			const block = all_blocks[count_block];
+			
 			const title = block.querySelector('strong').innerText;
+			
 			console.log(`[ ${count_block+1} ] ${title}`);
+			block.click();
+			
+			try{
+				const job_block = document.querySelector('.jobs-semantic-search-job-details-wrapper');
+				
+				let job_title = null;
+				let url_job_post = null
+				let company_name = null;
+				let about_job = null;
+				
+				try{
+					job_title = job_block.querySelector('.t-24.t-bold.inline').innerText;
+				}catch (err){
+					console.log(`Error: ${err}`);
+				};
+				try{
+					url_job_post = job_block.querySelector('.t-24.t-bold.inline').querySelector('a').href;
+				}catch(err){
+					console.log(`Error: ${err}`)
+				}
+				try{
+					company_name = job_block.querySelector('.job-details-jobs-unified-top-card__company-name').innerText;
+				}catch(err){
+					console.log(`Error: ${err}`)
+				};
+				try{
+					about_job = job_block.querySelector('.jobs-description__container').innerText;
+				}catch(err){
+					console.log(`Error: ${err}`)
+				}
+				
+				console.log(`Job Title: ${job_title}`);
+				console.log(`Link job post: ${url_job_post}`);
+				console.log(`Company Name: ${company_name}`);
+				console.log(`About Job: ${about_job}`);
+
+				let job_information = {					
+					title:title,
+					url_job_post:url_job_post,
+					company:company_name,
+					about_job:about_job
+				}
+				console.log(job_information);
+
+			}catch(err){
+				console.log(`Ошибка при парсинге джоб поста: ${err}`);
+			};
+			
+			await delay(1000);
 		}
 	} else {
 		console.log(all_blocks);
 	}
 }
 
+async function parserJob(){
+}
