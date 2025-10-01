@@ -1,12 +1,20 @@
-// parser.js
+// parser
 const params = new URLSearchParams(window.location.search);
 const tabId = parseInt(params.get('tabId'), 10);
 
 // пример парсинга
 document.getElementById('info').textContent = `Парсим вкладку #${tabId}`;
 
+
 // Внедряем код в эту вкладку
 document.getElementById('parseBtn').addEventListener('click', async () => {
+	
+	chrome.runtime.onMessage.addListener((message) => {
+		if (message.type === 'add_post'){
+			sendPost(message.data)
+		}
+	})
+	
 	const results = await chrome.scripting.executeScript({
 		target: { tabId: tabId },
 		func: parserPage
@@ -33,14 +41,8 @@ async function parserPage() {
 			
 				const title = block.querySelector('strong').innerText;
 
-				//const preview_url = block.querySelector('.semantic-search-results-list__job-posting-card-wrapper').querySelector('a').href
-				//console.log(preview_url)
-				//if (preview_url != null && !list_preview_link.has(preview_url)){
-				//	list_preview_link.add(preview_url);
-				//}
-			
 				block.click();
-				await delay(1000)
+				await delay(2000)
 			
 				try{
 					const job_block = document.querySelector('.jobs-semantic-search-job-details-wrapper');
@@ -89,6 +91,10 @@ async function parserPage() {
 							about_job:about_job
 						}
 						console.log(job_information);
+						
+						chrome.runtime.sendMessage(
+							{type:'add_post', data:job_information}
+						);
 					}
 
 				}catch(err){
@@ -103,5 +109,16 @@ async function parserPage() {
 	}
 }
 
-async function parserJob(){
+async function sendPost(info){
+	try{
+		const response = await fetch("http://127.0.0.1:7721/api/lead", {
+			method:"POST",
+			headers:{"Content-Type": "application/json"},
+			body: JSON.stringify(info)
+		});
+		const result = await response;
+		console.log(`send to server: ${info.title}`)
+	}catch(err){
+		console.log(`Ошибка при отправке данных: ${err}`);
+	}
 }

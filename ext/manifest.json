@@ -35,8 +35,8 @@
     ],
     "host_permissions":[
 	    "<all_urls>",
-	    "http://127.0.0.1:7700/*",
-	    "http://localhost:7700/*"
+	    "http://127.0.0.1:7721/*",
+	    "http://localhost:7721/*"
     ],
 
     "action": {
