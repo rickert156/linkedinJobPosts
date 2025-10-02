@@ -12,21 +12,27 @@ def ListJobPost():
     if os.path.exists(BASE_JOB_POSTS):
         with open(BASE_JOB_POSTS, 'r') as file:
             for row in csv.DictReader(file):
-                link = row['URL']
+                link = row['Job URL']
                 list_link.add(link)
     
     return list_link
 
 """Пишем инфу в док """
-def RecordingJobPost(title:str, url_job_post:str, company:str, about_job:str):
+def RecordingJobPost(
+        title:str, 
+        url_job_post:str, 
+        company:str, 
+        about_job:str,
+        company_url:str
+        ):
     if not os.path.exists(BASE_JOB_POSTS):
         with open(BASE_JOB_POSTS, 'a') as file:
             write = csv.writer(file)
-            write.writerow(['Company', 'Title', 'URL', 'About'])
+            write.writerow(['Company', 'Title', 'Company URL', 'Job URL', 'About'])
 
     with open(BASE_JOB_POSTS, 'a+') as file:
         write = csv.writer(file)
-        write.writerow([company, title, url_job_post, about_job])
+        write.writerow([company, title, company_url, url_job_post, about_job])
 
 
 @app.route('/')
@@ -40,7 +46,11 @@ def api_lead():
     title = lead_info['title']
     url_job_post = lead_info['url_job_post']
     company = lead_info['company']
+    company_url = lead_info['company_url']
     about_job = lead_info['about_job']
+
+    if company_url != None and '/life' in company_url:
+        company_url = company_url.split('/life')[0]
 
     collection_job_post_url = ListJobPost()
     
@@ -50,13 +60,15 @@ def api_lead():
             title=title, 
             url_job_post=url_job_post,
             company=company,
-            about_job=about_job
+            about_job=about_job,
+            company_url=company_url
         )
         print(
-                f'Job Title:\t{title}\n'
                 f'Company:\t{company}\n'
+                f'Company URL: {company_url}\n'
+                f'Job Title:\t{title}\n'
                 f'URL:\t\t{url_job_post}\n'
-                f'About:\t\t{about_job}'
+                #f'About:\t\t{about_job}'
                 )
     if url_job_post in collection_job_post_url:
         print(f'принят обработанный URL: {url_job_post}')

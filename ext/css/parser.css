@@ -1,0 +1,44 @@
+*{
+	background-color:black;
+}
+
+#info{
+	color:#00BFFF;
+	margin:10px;
+}
+
+#parseBtn{
+	margin:10px;
+	
+	background-color:#00BFFF;
+	font-size:14px;
+
+	border:none;
+
+	cursor:pointer;
+	transition: 0.4s
+}
+
+#parseBtn:hover{
+	background-color:#FFFF00;
+}
+
+#parseBtn:active{
+	background-color:#00FF00;
+}
+
+#result{
+	margin: 20px;
+}
+
+.job_post{
+	margin: 20px;
+	padding: 10px;
+	background-color:#87CEFA;
+	border:1px solid red;
+}
+
+.job_post p, a{
+	background-color: #87CEFA;
+}
+

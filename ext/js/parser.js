@@ -8,10 +8,26 @@ document.getElementById('info').textContent = `Парсим вкладку #${ta
 
 // Внедряем код в эту вкладку
 document.getElementById('parseBtn').addEventListener('click', async () => {
-	
-	chrome.runtime.onMessage.addListener((message) => {
+	document.getElementById('parseBtn').innerText = 'Парсим посты'
+
+	const result_block = document.getElementById('result');
+	chrome.runtime.onMessage.addListener(async (message) => {
 		if (message.type === 'add_post'){
-			sendPost(message.data)
+			let report_send = '<p style="color:#8B0000">Ошибка при отправке на сервер</p>'
+			const result_send = await sendPost(message.data);
+			console.log(result_send)
+			if (result_send){
+				report_send = '<p style="color:#191970">Успешно отправлено на сервер</p>';
+			}
+			result_block.innerHTML += `
+				<div class="job_post">
+				    <img width="32" src="${message.data.logo_url}">
+				    <p style="color:#00008B"><a href="${message.data.company_url}">${message.data.company}</a></p>
+				    <p>${message.data.title}</p>
+				    <p><a href="${message.data.url_job_post}" target="_blank" rel="noopener">Link post</a></p>
+				    ${report_send}
+				</div>
+				`;
 		}
 	})
 	
@@ -50,8 +66,10 @@ async function parserPage() {
 					let job_title = null;
 					let url_job_post = null
 					let company_name = null;
+					let company_url = null;
 					let about_job = null;
-				
+					let logo_url = null
+					
 					try{
 						job_title = job_block.querySelector('.t-24.t-bold.inline').innerText;
 					}catch (err){
@@ -68,7 +86,17 @@ async function parserPage() {
 						console.log(`Error: ${err}`)
 					};
 					try{
+						company_url = job_block.querySelector('.job-details-jobs-unified-top-card__company-name').querySelector('a').href;
+					}catch(err){
+						console.log(`Error: ${err}`)
+					}
+					try{
 						about_job = job_block.querySelector('.jobs-description__container').innerText;
+					}catch(err){
+						console.log(`Error: ${err}`)
+					}
+					try{
+						logo_url = job_block.querySelector('.ivm-view-attr__img-wrapper').querySelector('img').src;
 					}catch(err){
 						console.log(`Error: ${err}`)
 					}
@@ -79,6 +107,7 @@ async function parserPage() {
 						list_link.add(url_job_post);
 
 						console.log(`[ ${count_job} ] ${title}`);
+						console.log(`Company URL: ${company_url}`);
 						console.log(`Company Name: ${company_name}`);
 						console.log(`Job Title: ${job_title}`);
 						console.log(`Link job post: ${url_job_post}`);
@@ -88,7 +117,9 @@ async function parserPage() {
 							title:title,
 							url_job_post:url_job_post,
 							company:company_name,
-							about_job:about_job
+							about_job:about_job,
+							company_url:company_url,
+							logo_url:logo_url
 						}
 						console.log(job_information);
 						
@@ -118,7 +149,9 @@ async function sendPost(info){
 		});
 		const result = await response;
 		console.log(`send to server: ${info.title}`)
+		return result;
 	}catch(err){
 		console.log(`Ошибка при отправке данных: ${err}`);
+		return null;
 	}
 }
